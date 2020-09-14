@@ -1,0 +1,17 @@
+{
+  "name": "lqx_bot",
+  "version": "0.0.1",
+  "description": "Um simples bot do Telegram para consulta de informações sobre o LQX, assim como cotações e outros dados sobre a moeda em corretoras. Utiliza node.js, Telegraf(Repositório que gerencia as ações do Bot no Telegram) e Axios(Repositório que faz a leitura de dados de API).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "LQX Community (lqxcommunity@gmail.com)",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "telegraf": "^3.38.0"
+  },
+  "devDependencies": {},
+  "keywords": []
+}
