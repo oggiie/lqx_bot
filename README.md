@@ -5,10 +5,10 @@ Um simples bot do Telegram para consulta de informações sobre o LQX, assim com
 https://t.me/lqx_bot
 
 ### Dependências
-`
-$ npm install axios
+
+$ npm install axios<br />
 $ npm install telegraf
-`
+
 
 ### Comandos Disponíveis
 
