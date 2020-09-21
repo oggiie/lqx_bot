@@ -21,8 +21,9 @@ bot.action('lqx', (ctx) => {
     reply_markup: {
       inline_keyboard: [
         [{ text: "EXC Cripto", callback_data: "exc" }, { text: "CointradeCX", callback_data: "ct" }],
-        [{ text: "Tecnopag", callback_data: "tp" }, { text: "TODAS", callback_data: "all" }],
-        [{ text: "\u{2139} LQX INFO", callback_data: "info" }, { text: "Links Úteis \u{1F195}", callback_data: "links" }]
+        [{ text: "Tecnopag", callback_data: "tp" }, { text: "Bullgain \u{1F195}", callback_data: "bull" }],
+        [{ text: "TODAS", callback_data: "all" }],
+        [{ text: "\u{2139} LQX INFO", callback_data: "info" }, { text: "Links Úteis", callback_data: "links" }]
       ]
     }
   })
@@ -92,6 +93,22 @@ bot.action('bookct', (ctx) => {
     })
 })
 
+bot.action('bull', (ctx) => {
+  ctx.deleteMessage()
+  ctx.telegram.sendChatAction(ctx.chat.id, 'typing')
+  getdatabull()
+    .then((result) => {
+      ctx.telegram.sendMessage(ctx.chat.id, result,
+        {
+          reply_markup: {
+            inline_keyboard: [
+              [/*{ text: " \u{1F195} Acessar o book de oferta", callback_data: "bookexc" },*/ { text: "Voltar para o menu anterior", callback_data: "go-back" }]
+            ]
+          }
+        })
+    })
+})
+
 bot.action('tp', (ctx) => {
   ctx.deleteMessage()
   ctx.telegram.sendChatAction(ctx.chat.id, 'typing')
@@ -133,7 +150,7 @@ bot.action('links', (ctx) => {
         [{ text: "Bot LQX (Histórico)", url: "https://t.me/lqxh_bot" }, { text: "Block Explorer", url: "http://explorer.lqxcrypto.com/" }],
         [{ text: "Sua LQX", url: "https://www.sualqx.com.br/" }, { text: "Tecnopag", url: "https://tecnopag.com/" }],
         [{ text: "Exc Cripto", url: "https://exccripto.com/v3/br/" }, { text: "CointradeCX", url: "https://cointradecx.com/" }],
-        [{ text: "Folgory", url: "https://folgory.com/" }, { text: "WeHPM", url: "https://wehpm.com" }],
+        [{ text: "Bullgain", url: "https://bullgain.com/" }, { text: "WeHPM", url: "https://wehpm.com" }],
         [{ text: "\u{1F519} Voltar para o menu anterior", callback_data: "go-back" }]
       ]
     }
@@ -162,8 +179,9 @@ bot.action('go-back', (ctx) => {
     reply_markup: {
       inline_keyboard: [
         [{ text: "EXC Cripto", callback_data: "exc" }, { text: "CointradeCX", callback_data: "ct" }],
-        [{ text: "Tecnopag", callback_data: "tp" }, { text: "TODAS", callback_data: "all" }],
-        [{ text: "\u{2139} LQX INFO", callback_data: "info" }, { text: "Links Úteis \u{1F195}", callback_data: "links" }]
+        [{ text: "Tecnopag", callback_data: "tp" }, { text: "Bullgain \u{1F195}", callback_data: "bull" }],
+        [{ text: "TODAS", callback_data: "all" }],
+        [{ text: "\u{2139} LQX INFO", callback_data: "info" }, { text: "Links Úteis", callback_data: "links" }]
       ]
     }
   })
@@ -395,7 +413,19 @@ async function getdatatp() {
   Preço de Venda USD: ${parseFloat(quotes.response.data.lqx_usd).toFixed(3)}
   Preço de Venda EUR: ${parseFloat(quotes.response.data.lqx_eur).toFixed(3)}
   `
+}
 
+async function getdatabull() {
+  const url = 'https://trade.bullgain.com/api/v3/public/getmarketsummary?market=LQX_BRL'
+  let res = await axios.get(url)
+  const quotes = res.data.result
+
+  return `Cotação do LQX na Bullgain:
+  Preço de Venda: ${quotes.Ask}
+  Preço de Compra: ${quotes.Bid}
+  Volume BRL (24h): ${parseFloat(quotes.BaseVolume.toFixed(3))}
+  Volume LQX (24h): ${parseFloat(quotes.Volume.toFixed(3))}
+  `
 }
 
 async function getdataall() {
@@ -403,15 +433,14 @@ async function getdataall() {
   const retorno = {
     variavel1: await getdataexc(),
     variavel2: await getdatact(),
-    variavel3: await getdatatp(),
-    variavel4: await getdatafg()
+    variavel3: await getdatabull(),
+    variavel4: await getdatatp()
   }
 
   return retorno
-
 }
 
-async function getdatafg() {
+/*async function getdatafg() {
   const url = 'https://folgory.com/api/v1'
   let res = await axios.get(url)
   const response = res.data
@@ -421,14 +450,13 @@ async function getdatafg() {
   return `Cotação do LQX na Folgory:
   Último Preço de Venda LQX/BTC: ${quotes.last}
   `
-}
+}*/
 
 async function getdifficulty() {
   const url = 'https://explorer.lqxcommunity.org/api/getdifficulty'
   let res = await axios.get(url)
 
   return `Dificuldade da Rede de LQX: ${parseFloat(res.data.toFixed(3))}`
-
 }
 
 async function getblockcount() {
@@ -437,7 +465,6 @@ async function getblockcount() {
   let res = await axios.get(url)
 
   return `Bloco atual de LQX: ${res.data}`
-
 }
 
 async function getmoneysupply() {
@@ -446,7 +473,6 @@ async function getmoneysupply() {
   let res = await axios.get(url)
 
   return `Quantidade total de LQX em circulação: ${parseFloat(res.data.toFixed(3))}`
-
 }
 
 async function getmasternodecount() {
@@ -455,7 +481,6 @@ async function getmasternodecount() {
   let res = await axios.get(url)
 
   return `Quantidade de masternodes ativos de LQX: ${res.data}`
-
 }
 
 async function getbrlexc() {
@@ -464,7 +489,6 @@ async function getbrlexc() {
   const quotes = res.data.result
 
   return quotes.BaseVolume
-
 }
 
 async function getbrlct() {
@@ -473,14 +497,22 @@ async function getbrlct() {
   const quotes = res.data.result[0]
 
   return quotes.quoteVolume
+}
 
+async function getbrlbull() {
+  const url = 'https://trade.bullgain.com/api/v3/public/getmarketsummary?market=LQX_BRL'
+  let res = await axios.get(url)
+  const quotes = res.data.result
+
+  return quotes.BaseVolume
 }
 
 const totalbrl = async () => {
   const vexc = await getbrlexc();
   const vct = await getbrlct();
+  const vbull = await getbrlbull();
 
-  return `Total de BRL transacionados em 24h: ${(parseFloat(vexc) + parseFloat(vct)).toFixed(3)}`
+  return `Total de BRL transacionados em 24h: ${(parseFloat(vexc) + parseFloat(vct)).toFixed(3) + parseFloat(vbull)}`
 }
 
 async function getlqxexc() {
@@ -489,7 +521,6 @@ async function getlqxexc() {
   const quotes = res.data.result
 
   return quotes.Volume
-
 }
 
 async function getlqxct() {
@@ -498,14 +529,22 @@ async function getlqxct() {
   const quotes = res.data.result[0]
 
   return quotes.vol24h
+}
 
+async function getlqxbull() {
+  const url = 'https://trade.bullgain.com/api/v3/public/getmarketsummary?market=LQX_BRL'
+  let res = await axios.get(url)
+  const quotes = res.data.result
+
+  return quotes.Volume
 }
 
 const totallqx = async () => {
   const vexc = await getlqxexc();
   const vct = await getlqxct();
+  const vbull = await getlqxbull();
 
-  return `Total de LQX transacionados em 24h: ${(parseFloat(vexc) + parseFloat(vct)).toFixed(3)}`
+  return `Total de LQX transacionados em 24h: ${(parseFloat(vexc) + parseFloat(vct)).toFixed(3) + parseFloat(vbull)}`
 }
 
 async function gethighexc() {
@@ -514,7 +553,6 @@ async function gethighexc() {
   const quotes = res.data.result
 
   return quotes.High
-
 }
 
 async function gethighct() {
@@ -523,7 +561,14 @@ async function gethighct() {
   const quotes = res.data.result[0]
 
   return quotes.high24h
+}
 
+async function gethighbull() {
+  const url = 'https://trade.bullgain.com/api/v3/public/getmarketsummary?market=LQX_BRL'
+  let res = await axios.get(url)
+  const quotes = res.data.result
+
+  return quotes.High
 }
 
 async function getqlqx() {
@@ -531,16 +576,16 @@ async function getqlqx() {
   let res = await axios.get(url)
 
   return parseFloat(res.data.toFixed(3))
-
 }
 
 const getmarketcap = async () => {
   const vexc = await gethighexc();
   const vct = await gethighct();
+  const vbull = await gethighbull();
   const qlqx = await getqlqx();
 
 
-  return `Valor de Marketcap de LQX em BRL: ${((parseFloat(vexc) + parseFloat(vct)) / 2 * parseFloat(qlqx)).toFixed(3)}`
+  return `Valor de Marketcap de LQX em BRL: ${((parseFloat(vexc) + parseFloat(vct) + parseFloat(vbull)) / 3 * parseFloat(qlqx)).toFixed(3)}`
 }
 
 const sleep = async (time) => {
@@ -560,5 +605,4 @@ async function getallinfo() {
   }
 
   return retorno
-
 }
